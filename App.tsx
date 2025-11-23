@@ -400,7 +400,7 @@ function App() {
         </div>
         <div className="flex flex-col items-center gap-2 text-gray-500 text-sm">
            <p className="flex items-center gap-1">
-             <Copyright size={12} /> 2024 Gary Robinson, III. All rights reserved.
+             <Copyright size={12} /> 2025 Gary Robinson, III. All rights reserved.
            </p>
            <p className="text-xs uppercase tracking-wider opacity-60">Design & Content Protected</p>
         </div>
