@@ -5,7 +5,7 @@ import PhotoModal from './components/PhotoModal';
 import BlogList from './components/BlogList';
 import BlogPostView from './components/BlogPostView';
 import { Photo, BlogPost } from './types';
-import { Camera, Instagram, Mail, ArrowDown, Sun, Moon, Loader2, ShieldCheck, Copyright } from 'lucide-react';
+import { Camera, Instagram, Mail, ArrowDown, Sun, Moon, Loader2 } from 'lucide-react';
 import { getPhotos, getBlogPosts, isCmsConfigured } from './services/contentfulService';
 
 // Fallback / Demo Data
@@ -93,9 +93,6 @@ function App() {
   const [view, setView] = useState<ViewState>('home');
   const [activePost, setActivePost] = useState<BlogPost | null>(null);
 
-  // Copyright Protection State
-  const [showCopyrightAlert, setShowCopyrightAlert] = useState(false);
-
   // Load Content
   useEffect(() => {
     const loadContent = async () => {
@@ -115,7 +112,6 @@ function App() {
     loadContent();
   }, []);
 
-  // Theme Management
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -141,7 +137,6 @@ function App() {
     }
   };
 
-  // Scroll Handling
   useEffect(() => {
     const handleScroll = () => {
       requestAnimationFrame(() => {
@@ -150,30 +145,6 @@ function App() {
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Copyright Protection Logic
-  useEffect(() => {
-    const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-      setShowCopyrightAlert(true);
-      setTimeout(() => setShowCopyrightAlert(false), 2500);
-    };
-
-    // Prevent dragging images
-    const handleDragStart = (e: DragEvent) => {
-      if (e.target instanceof HTMLImageElement) {
-        e.preventDefault();
-      }
-    };
-
-    document.addEventListener('contextmenu', handleContextMenu);
-    document.addEventListener('dragstart', handleDragStart);
-    
-    return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
-      document.removeEventListener('dragstart', handleDragStart);
-    };
   }, []);
 
   // Navigation Handlers
@@ -358,9 +329,9 @@ function App() {
                 </div>
                 <h2 className="text-3xl md:text-5xl font-bold mb-8 text-gray-900 dark:text-white transition-colors duration-500">Capturing the Unseen</h2>
                 <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed mb-12 transition-colors duration-500">
-                  I am a visual artist obsessed with the geometry of urban life and the silence of nature. 
-                  My work explores the space between reality and abstraction, finding order in chaos.
-                  Using modern AI tools, I break down the technicality of my own art to understand the feeling behind the lens.
+                  I am a visual artist drawn to the geometry of urban life and the quiet breath of nature.
+                  My work explores the space between reality and abstraction, searching for stillness within chaos.
+                  Through my lens, I aim to capture the emotion of a moment — not just what it looked like, but how it felt.
                 </p>
                 <div className="flex justify-center gap-6" id="contact">
                   <a href="#" className="p-3 border border-gray-300 dark:border-gray-700 rounded-full hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black text-gray-900 dark:text-white transition-all hover:scale-110">
@@ -398,13 +369,8 @@ function App() {
         <div className="flex justify-center items-center mb-4 cursor-pointer" onClick={() => goHome()}>
             <Logo />
         </div>
-        <div className="flex flex-col items-center gap-2 text-gray-500 text-sm">
-           <p className="flex items-center gap-1">
-             <Copyright size={12} /> 2025 Gary Robinson, III. All rights reserved.
-           </p>
-           <p className="text-xs uppercase tracking-wider opacity-60">Design & Content Protected</p>
-        </div>
-        <p className="text-gray-700 dark:text-gray-600 text-xs mt-4 font-mono">
+        <p className="text-gray-500 text-sm">© 2024 Gary Robinson Photography. All rights reserved.</p>
+        <p className="text-gray-700 dark:text-gray-600 text-xs mt-2 font-mono">
             {isCmsConfigured() ? 'CMS Online' : 'Demo Mode'}
         </p>
       </footer>
@@ -415,14 +381,6 @@ function App() {
           photo={selectedPhoto} 
           onClose={() => setSelectedPhoto(null)} 
         />
-      )}
-
-      {/* Copyright Protection Alert */}
-      {showCopyrightAlert && (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-[100] bg-black/90 dark:bg-white/90 text-white dark:text-black px-6 py-3 rounded-full backdrop-blur-md text-sm font-bold border border-white/10 dark:border-black/10 shadow-2xl animate-fade-in-up flex items-center gap-3">
-          <ShieldCheck size={18} className="text-[#70B786]" />
-          <span>© 2024 Gary Robinson, III. Content is protected.</span>
-        </div>
       )}
     </div>
   );
