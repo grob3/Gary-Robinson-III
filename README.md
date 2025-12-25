@@ -1,58 +1,53 @@
-# GR/// Portfolio Setup Guide
 
-This project is a React-based photography portfolio that supports a Headless CMS (Contentful) for managing photos and blog posts. 
+# GR/// Portfolio - Hygraph Setup
 
-By default, the site runs in **Demo Mode**, displaying static placeholder content. To enable dynamic content management, follow the instructions below.
+This portfolio uses **Hygraph** (formerly GraphCMS) for content management. It includes a custom copyright protection layer.
 
-## 1. Create a Contentful Account
+## 1. Setup Hygraph
 
-1.  Go to [Contentful.com](https://www.contentful.com/) and sign up for a free account.
-2.  Create a new "Space" (e.g., `Portfolio`).
+1. Sign up at [Hygraph.com](https://hygraph.com/).
+2. Create a new Project from scratch.
+3. In the **Schema** section, create two models:
 
-## 2. Define Content Models
-
-You need to create two "Content Types" in Contentful to match the application's data structure.
-
-### Content Type 1: `photo`
-*   **Name**: `Photo`
-*   **API Identifier**: `photo` (Important: must be exact)
+### Model 1: `Photo`
+*   **Display Name**: Photo
+*   **API ID**: `Photo`
 *   **Fields**:
-    1.  `title` (Text - Short text)
-    2.  `location` (Text - Short text)
-    3.  `image` (Media - One file)
+    *   `Title` (Single line text)
+    *   `Location` (Single line text)
+    *   `Image` (Asset - Required)
 
-### Content Type 2: `blogPost`
-*   **Name**: `Blog Post`
-*   **API Identifier**: `blogPost` (Important: must be exact)
+### Model 2: `BlogPost`
+*   **Display Name**: Blog Post
+*   **API ID**: `BlogPost`
 *   **Fields**:
-    1.  `title` (Text - Short text)
-    2.  `excerpt` (Text - Long text, appearance: multiple lines)
-    3.  `content` (Text - Long text). *Note: The app expects plain text with double line breaks for paragraphs.*
-    4.  `date` (Date and time)
-    5.  `readTime` (Text - Short text, e.g., "5 min read")
-    6.  `coverImage` (Media - One file)
-    7.  `gallery` (Media - Many files)
-    8.  `tags` (Text - List)
+    *   `Title` (Single line text)
+    *   `Excerpt` (Multi-line text)
+    *   `Content` (Markdown or Multi-line text)
+    *   `Date` (Date)
+    *   `ReadTime` (Single line text, e.g. "4 min read")
+    *   `CoverImage` (Asset - Required)
+    *   `Gallery` (Asset - Multi-select)
+    *   `Tags` (Single line text - Multi-select / String Array)
 
-## 3. Add Content
+## 2. API Configuration
 
-1.  Go to the **Content** tab.
-2.  Add a few "Photo" entries and "Blog Post" entries.
-3.  **Publish** them.
+1. Go to **Project Settings > API Access**.
+2. Under **Public Content API**, ensure "Read" permissions are enabled for everyone (or create a Permanent Auth Token).
+3. Copy the **Content API Endpoint URL**.
 
-## 4. Connect the App
+## 3. Environment Variable
 
-To connect your portfolio to Contentful, you need your API keys.
-
-1.  In Contentful, go to **Settings > API keys**.
-2.  Add a new API key.
-3.  Copy the **Space ID** and **Content Delivery API - access token**.
-
-Add these keys to your environment variables (e.g., in `.env` or your hosting provider's dashboard):
+Add the following to your environment (Web Container or `.env`):
 
 ```bash
-CONTENTFUL_SPACE_ID=your_space_id_here
-CONTENTFUL_ACCESS_TOKEN=your_access_token_here
+HYGRAPH_ENDPOINT=https://api-us-east-1-shared-usea1-02.hygraph.com/v2/your_id/master
 ```
 
-**Note:** If you are running this in a web container or playground that does not support custom `.env` files, the app will continue to show the Demo Mode data.
+## 4. Copyright Protection
+
+This site has active measures to prevent image theft:
+- **Right-Click Disabled**: Intercepts `contextmenu` events.
+- **Drag-and-Drop Blocked**: Images cannot be dragged to the desktop.
+- **Visual Alert**: A toast notification appears when a user attempts to bypass protection.
+- **Print Protection**: CSS `@media print` rules hide critical imagery.
