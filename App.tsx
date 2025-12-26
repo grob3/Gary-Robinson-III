@@ -65,9 +65,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Disable right click
+    // Disable right click and drag for protection
     window.addEventListener('contextmenu', handleProtectionTrigger);
-    // Disable drag globally for images
     window.addEventListener('dragstart', handleProtectionTrigger);
     
     return () => {
@@ -76,14 +75,23 @@ function App() {
     };
   }, [handleProtectionTrigger]);
 
-  // Load Content
+  // Load Content with robust error handling
   useEffect(() => {
     const loadContent = async () => {
-      setLoadingData(true);
-      const [cmsPhotos, cmsPosts] = await Promise.all([getPhotos(), getBlogPosts()]);
-      setPhotos(cmsPhotos.length > 0 ? cmsPhotos : DEMO_PHOTOS);
-      setBlogPosts(cmsPosts.length > 0 ? cmsPosts : DEMO_BLOG_POSTS);
-      setLoadingData(false);
+      try {
+        setLoadingData(true);
+        const [cmsPhotos, cmsPosts] = await Promise.all([getPhotos(), getBlogPosts()]);
+        
+        setPhotos(cmsPhotos.length > 0 ? cmsPhotos : DEMO_PHOTOS);
+        setBlogPosts(cmsPosts.length > 0 ? cmsPosts : DEMO_BLOG_POSTS);
+      } catch (error) {
+        console.error('Critical loading error:', error);
+        // Ensure app still loads with fallback data if something crashes
+        setPhotos(DEMO_PHOTOS);
+        setBlogPosts(DEMO_BLOG_POSTS);
+      } finally {
+        setLoadingData(false);
+      }
     };
     loadContent();
   }, []);
@@ -143,7 +151,6 @@ function App() {
     <div className="relative min-h-screen bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-white selection:bg-[#CE191D] selection:text-white font-sans transition-colors duration-500 overflow-x-hidden">
       <ParallaxBackground />
 
-      {/* Copyright Protection Toast */}
       {showProtectionToast && (
         <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] animate-fade-in-up">
            <div className="bg-black/90 dark:bg-white/95 backdrop-blur-xl text-white dark:text-black px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 border border-white/10 dark:border-black/5">
@@ -153,7 +160,6 @@ function App() {
         </div>
       )}
 
-      {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrollY > 50 ? 'bg-white/80 dark:bg-black/80 backdrop-blur-md py-4 border-b border-gray-200 dark:border-white/5' : 'py-8 bg-transparent'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <div onClick={() => goHome()} className="cursor-pointer"><Logo /></div>
@@ -174,7 +180,6 @@ function App() {
       <main>
         {view === 'home' && (
           <>
-            {/* Hero */}
             <section className="relative h-screen flex items-center justify-center">
               <div 
                 className="absolute inset-0 opacity-20 dark:opacity-40 bg-[url('https://picsum.photos/1920/1080?grayscale')] bg-cover bg-center"
@@ -188,10 +193,10 @@ function App() {
                  <div className="absolute bottom-6 left-6 w-8 h-8 border-b-[2px] border-l-[2px] border-gray-900 dark:border-white"></div>
                  <div className="absolute bottom-6 right-6 w-8 h-8 border-b-[2px] border-r-[2px] border-gray-900 dark:border-white"></div>
 
-                 <div className="relative flex flex-col items-center">
+                 <div className="relative flex flex-col items-center text-center px-4">
                     <div className="relative">
-                        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-gray-400 dark:text-gray-600 mix-blend-multiply dark:mix-blend-overlay absolute top-0 left-0 w-full text-center whitespace-nowrap opacity-60 blur-[0.5px]" style={{ transform: `translateX(${focusOffset}px)` }}>GARY ROBINSON, III</h1>
-                        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-gray-900 dark:text-white relative z-10 text-center whitespace-nowrap">GARY ROBINSON, III</h1>
+                        <h1 className="text-4xl md:text-7xl font-black tracking-tighter text-gray-400 dark:text-gray-600 mix-blend-multiply dark:mix-blend-overlay absolute top-0 left-0 w-full text-center whitespace-nowrap opacity-60 blur-[0.5px]" style={{ transform: `translateX(${focusOffset}px)` }}>GARY ROBINSON, III</h1>
+                        <h1 className="text-4xl md:text-7xl font-black tracking-tighter text-gray-900 dark:text-white relative z-10 text-center whitespace-nowrap">GARY ROBINSON, III</h1>
                     </div>
                     <div className="mt-6 flex items-center gap-4 opacity-80">
                         <div className="h-[1px] w-12 bg-[#CE191D]"></div>
@@ -202,7 +207,6 @@ function App() {
               </div>
             </section>
 
-            {/* Gallery */}
             <section id="gallery" className="relative z-20 py-32 container mx-auto px-6">
               <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4 border-b border-gray-200 dark:border-white/10 pb-8">
                 <div>
@@ -266,7 +270,7 @@ function App() {
                    © {new Date().getFullYear()} Gary Robinson III
                 </p>
                 <p className="text-gray-500 text-[10px] max-w-sm mx-auto leading-relaxed">
-                   All photographs and design elements are protected under international copyright law. Unauthorized reproduction or use is strictly prohibited.
+                   All photographs and design elements are protected under international copyright law.
                 </p>
                 <div className="mt-4 flex items-center justify-center gap-4">
                    <div className={`h-1.5 w-1.5 rounded-full ${isCmsConfigured() ? 'bg-green-500' : 'bg-orange-500'}`}></div>

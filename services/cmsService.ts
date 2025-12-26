@@ -1,7 +1,19 @@
 
 import { Photo, BlogPost } from '../types';
 
-const HYGRAPH_ENDPOINT = process.env.HYGRAPH_ENDPOINT;
+// Safely access environment variables to prevent ReferenceErrors in browser ESM
+const getEnv = (key: string): string | undefined => {
+  try {
+    if (typeof process !== 'undefined' && process.env) {
+      return process.env[key];
+    }
+  } catch (e) {
+    // process.env is not available
+  }
+  return undefined;
+};
+
+const HYGRAPH_ENDPOINT = getEnv('HYGRAPH_ENDPOINT');
 
 export const isCmsConfigured = (): boolean => {
   return !!HYGRAPH_ENDPOINT;
@@ -33,6 +45,8 @@ export const getPhotos = async (): Promise<Photo[]> => {
     });
 
     const { data } = await response.json();
+    if (!data || !data.photos) return [];
+
     return data.photos.map((p: any) => ({
       id: p.id,
       url: p.image.url,
@@ -79,6 +93,8 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
     });
 
     const { data } = await response.json();
+    if (!data || !data.blogPosts) return [];
+
     return data.blogPosts.map((post: any) => ({
       id: post.id,
       title: post.title,

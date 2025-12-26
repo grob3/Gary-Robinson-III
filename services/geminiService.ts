@@ -1,8 +1,8 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult } from "../types";
 
 // Helper to convert an image URL to a base64 string
-// Note: This relies on the image server allowing CORS.
 async function urlToBase64(url: string): Promise<string> {
   try {
     const response = await fetch(url);
@@ -11,7 +11,6 @@ async function urlToBase64(url: string): Promise<string> {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
-        // Remove the data URL prefix (e.g., "data:image/jpeg;base64,")
         const base64Data = base64String.split(',')[1];
         resolve(base64Data);
       };
@@ -25,27 +24,32 @@ async function urlToBase64(url: string): Promise<string> {
 }
 
 export const analyzePhoto = async (photoUrl: string): Promise<AnalysisResult> => {
-  const apiKey = process.env.API_KEY;
+  // Safe environment access
+  let apiKey = undefined;
+  try {
+    if (typeof process !== 'undefined' && process.env) {
+      apiKey = process.env.API_KEY;
+    }
+  } catch (e) {}
+
   if (!apiKey) {
     throw new Error("API Key not found");
   }
 
   const ai = new GoogleGenAI({ apiKey });
-  
-  // Prepare the image data
   const base64Data = await urlToBase64(photoUrl);
 
   const prompt = `
     Analyze this photograph as a professional art critic and technical photographer.
     Provide a JSON response with:
     1. A creative, short title.
-    2. Estimated technical specs (Guess the Camera Type, Lens, Aperture, ISO based on visual characteristics like depth of field and grain).
-    3. A brief, poetic artistic description of the composition, lighting, and mood (max 2 sentences).
+    2. Estimated technical specs (Guess the Camera Type, Lens, Aperture, ISO based on visual characteristics).
+    3. A brief, poetic artistic description (max 2 sentences).
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash", // Using flash for speed and vision capabilities
+      model: "gemini-3-flash-preview",
       contents: {
         parts: [
           {
@@ -72,16 +76,15 @@ export const analyzePhoto = async (photoUrl: string): Promise<AnalysisResult> =>
     });
 
     const text = response.text;
-    if (!text) throw new Error("No response from Gemini");
+    if (!text) throw new Error("No response text");
     
     return JSON.parse(text) as AnalysisResult;
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
-    // Fallback for demo purposes if API fails or CORS blocks
     return {
       title: "Visual Analysis Unavailable",
       technicalSpecs: "Data unavailable",
-      artisticDescription: "Unable to analyze this image at the moment. Please ensure API key is valid and CORS is allowed."
+      artisticDescription: "Unable to analyze this image at the moment."
     };
   }
 };
