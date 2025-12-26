@@ -1,5 +1,5 @@
 
-import { Photo, BlogPost } from '../types';
+import { Photo, BlogPost } from '../types.ts';
 
 // Safely access environment variables to prevent ReferenceErrors in browser ESM
 const getEnv = (key: string): string | undefined => {

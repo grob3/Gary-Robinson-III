@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import Logo from './components/Logo';
-import ParallaxBackground from './components/ParallaxBackground';
-import PhotoModal from './components/PhotoModal';
-import BlogList from './components/BlogList';
-import BlogPostView from './components/BlogPostView';
-import { Photo, BlogPost } from './types';
+import Logo from './components/Logo.tsx';
+import ParallaxBackground from './components/ParallaxBackground.tsx';
+import PhotoModal from './components/PhotoModal.tsx';
+import BlogList from './components/BlogList.tsx';
+import BlogPostView from './components/BlogPostView.tsx';
+import { Photo, BlogPost } from './types.ts';
 import { Camera, Instagram, Mail, ArrowDown, Sun, Moon, Loader2, ShieldAlert, Lock } from 'lucide-react';
-import { getPhotos, getBlogPosts, isCmsConfigured } from './services/cmsService';
+import { getPhotos, getBlogPosts, isCmsConfigured } from './services/cmsService.ts';
 
 // Fallback / Demo Data
 const DEMO_PHOTOS: Photo[] = Array.from({ length: 12 }).map((_, i) => {

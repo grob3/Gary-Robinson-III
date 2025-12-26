@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { AnalysisResult } from "../types";
+import { AnalysisResult } from "../types.ts";
 
 // Helper to convert an image URL to a base64 string
 async function urlToBase64(url: string): Promise<string> {

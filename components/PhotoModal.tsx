@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, Aperture, Wand2, Loader2, MapPin } from 'lucide-react';
-import { Photo, AnalysisResult } from '../types';
-import { analyzePhoto } from '../services/geminiService';
+import { Photo, AnalysisResult } from '../types.ts';
+import { analyzePhoto } from '../services/geminiService.ts';
 
 interface PhotoModalProps {
   photo: Photo | null;
