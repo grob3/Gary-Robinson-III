@@ -18,7 +18,7 @@ function removeImportMap(): Plugin {
   };
 }
 
-// Plugin to ensure .nojekyll file is included for GitHub Pages
+// Plugin to ensure .nojekyll and CNAME files are included for GitHub Pages
 function ensureNoJekyll(): Plugin {
   return {
     name: 'ensure-nojekyll',
@@ -26,6 +26,12 @@ function ensureNoJekyll(): Plugin {
       const nojekyllPath = path.resolve(__dirname, 'dist', '.nojekyll');
       if (!fs.existsSync(nojekyllPath)) {
         fs.writeFileSync(nojekyllPath, '');
+      }
+      // Copy CNAME file if it exists
+      const cnamePath = path.resolve(__dirname, 'CNAME');
+      const distCnamePath = path.resolve(__dirname, 'dist', 'CNAME');
+      if (fs.existsSync(cnamePath) && !fs.existsSync(distCnamePath)) {
+        fs.copyFileSync(cnamePath, distCnamePath);
       }
     },
   };
