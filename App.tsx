@@ -178,6 +178,11 @@ function App() {
   }, [loadingData]);
   // #endregion
 
+  // Log to console for production debugging (will help verify which version is deployed)
+  useEffect(() => {
+    console.log('[GR3] App version: hooks-fixed-v2', { loadingData, photosCount: photos.length, view });
+  }, [loadingData, photos.length, view]);
+
   if (loadingData) {
      return (
        <div className="min-h-screen bg-gray-50 dark:bg-[#050505] flex flex-col items-center justify-center text-gray-900 dark:text-white">
