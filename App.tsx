@@ -154,16 +154,31 @@ function App() {
   const opacity = Math.min(1, Math.max(0, 1 - (scrollY - 300) / 300));
   const focusOffset = Math.max(0, 60 - scrollY * 1.2);
 
-  // #region agent log
+  // #region agent log - ALL hooks must be before conditional returns
   useEffect(() => {
     fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:141',message:'checking loadingData state',data:{loadingData},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    if (loadingData) {
+      fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:143',message:'rendering loading screen',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    } else {
+      fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:150',message:'rendering main app content',data:{photosCount:photos.length,view},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+    }
+  }, [loadingData, photos.length, view]);
+  
+  useEffect(() => {
+    if (!loadingData) {
+      const checkDOM = () => {
+        const root = document.getElementById('root');
+        const mainDiv = root?.querySelector('.min-h-screen');
+        const computedStyle = mainDiv ? window.getComputedStyle(mainDiv) : null;
+        fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:184',message:'DOM visibility check',data:{rootExists:!!root,mainDivExists:!!mainDiv,display:computedStyle?.display,opacity:computedStyle?.opacity,visibility:computedStyle?.visibility,zIndex:computedStyle?.zIndex,backgroundColor:computedStyle?.backgroundColor},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+      };
+      const timeout = setTimeout(checkDOM, 100);
+      return () => clearTimeout(timeout);
+    }
   }, [loadingData]);
   // #endregion
 
   if (loadingData) {
-     // #region agent log
-     fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:143',message:'rendering loading screen',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-     // #endregion
      return (
        <div className="min-h-screen bg-gray-50 dark:bg-[#050505] flex flex-col items-center justify-center text-gray-900 dark:text-white">
          <Loader2 size={40} className="animate-spin mb-4 text-[#CE191D]" />
@@ -171,15 +186,6 @@ function App() {
        </div>
      );
   }
-
-  // #region agent log
-  useEffect(() => {
-    if (!loadingData) {
-      fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:150',message:'rendering main app content',data:{photosCount:photos.length,view},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-      fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:152',message:'main div rendered',data:{theme,view,photosCount:photos.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-    }
-  }, [loadingData, photos.length, view, theme]);
-  // #endregion
 
   return (
     <div className="relative min-h-screen bg-gray-50 dark:bg-[#050505] text-gray-900 dark:text-white selection:bg-[#CE191D] selection:text-white font-sans transition-colors duration-500 overflow-x-hidden">
