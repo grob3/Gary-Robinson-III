@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import type { Plugin } from 'vite';
@@ -13,6 +14,19 @@ function removeImportMap(): Plugin {
         return html.replace(/<script type="importmap">[\s\S]*?<\/script>\s*/g, '');
       }
       return html;
+    },
+  };
+}
+
+// Plugin to ensure .nojekyll file is included for GitHub Pages
+function ensureNoJekyll(): Plugin {
+  return {
+    name: 'ensure-nojekyll',
+    writeBundle() {
+      const nojekyllPath = path.resolve(__dirname, 'dist', '.nojekyll');
+      if (!fs.existsSync(nojekyllPath)) {
+        fs.writeFileSync(nojekyllPath, '');
+      }
     },
   };
 }
@@ -32,10 +46,13 @@ export default defineConfig(({ mode }) => {
         rollupOptions: {
           output: {
             manualChunks: undefined,
+            entryFileNames: 'assets/[name].mjs',
+            chunkFileNames: 'assets/[name].mjs',
+            assetFileNames: 'assets/[name].[ext]',
           },
         },
       },
-      plugins: [react(), removeImportMap()],
+      plugins: [react(), removeImportMap(), ensureNoJekyll()],
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
