@@ -4,8 +4,14 @@ import { Photo, BlogPost } from '../types.ts';
 // Safely access environment variables to prevent ReferenceErrors in browser ESM
 const getEnv = (key: string): string | undefined => {
   try {
+    // Try process.env first (for Vite build-time replacement)
     if (typeof process !== 'undefined' && process.env) {
-      return process.env[key];
+      const value = process.env[key];
+      if (value) return value;
+    }
+    // Fallback: try to get from window (for runtime injection)
+    if (typeof window !== 'undefined' && (window as any).__ENV__) {
+      return (window as any).__ENV__[key];
     }
   } catch (e) {
     // process.env is not available
