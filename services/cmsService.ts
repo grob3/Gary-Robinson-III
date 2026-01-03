@@ -26,9 +26,6 @@ export const isCmsConfigured = (): boolean => {
 };
 
 export const getPhotos = async (): Promise<Photo[]> => {
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'cmsService.ts:28',message:'getPhotos called',data:{isConfigured:isCmsConfigured()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-  // #endregion
   if (!isCmsConfigured()) return [];
 
   const query = `
@@ -47,18 +44,11 @@ export const getPhotos = async (): Promise<Photo[]> => {
   `;
 
   try {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'cmsService.ts:49',message:'fetching photos from Hygraph',data:{endpoint:HYGRAPH_ENDPOINT?HYGRAPH_ENDPOINT.substring(0,50)+'...':'undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     const response = await fetch(HYGRAPH_ENDPOINT!, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query }),
     });
-
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'cmsService.ts:56',message:'photos fetch response received',data:{status:response.status,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     const { data } = await response.json();
     if (!data || !data.photos) return [];
 
@@ -72,18 +62,12 @@ export const getPhotos = async (): Promise<Photo[]> => {
       height: p.image.height,
     }));
   } catch (error) {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'cmsService.ts:66',message:'getPhotos error',data:{errorMessage:error instanceof Error?error.message:String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     console.error('Hygraph Photo Fetch Error:', error);
     return [];
   }
 };
 
 export const getBlogPosts = async (): Promise<BlogPost[]> => {
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'cmsService.ts:77',message:'getBlogPosts called',data:{isConfigured:isCmsConfigured()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-  // #endregion
   if (!isCmsConfigured()) return [];
 
   const query = `
@@ -107,18 +91,11 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
   `;
 
   try {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'cmsService.ts:100',message:'fetching blog posts from Hygraph',data:{endpoint:HYGRAPH_ENDPOINT?HYGRAPH_ENDPOINT.substring(0,50)+'...':'undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     const response = await fetch(HYGRAPH_ENDPOINT!, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query }),
     });
-
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'cmsService.ts:107',message:'blog posts fetch response received',data:{status:response.status,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     const { data } = await response.json();
     if (!data || !data.blogPosts) return [];
 
@@ -134,9 +111,6 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
       tags: post.tags || [],
     }));
   } catch (error) {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'cmsService.ts:121',message:'getBlogPosts error',data:{errorMessage:error instanceof Error?error.message:String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     console.error('Hygraph Blog Fetch Error:', error);
     return [];
   }

@@ -38,19 +38,6 @@
 </head>
   <body class="bg-gray-50 text-gray-900 dark:bg-[#0a0a0a] dark:text-white transition-colors duration-300">
     <div id="root"></div>
-    <script>
-      // #region agent log - inline HTML script
-      (function() {
-        try {
-          fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'index.html:inline',message:'HTML loaded, inline script executing',data:{rootExists:!!document.getElementById('root'),timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(function(e){console.error('Log fetch failed:',e);});
-          window.addEventListener('error',function(e){fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'index.html:inline',message:'HTML inline error handler',data:{message:e.message,filename:e.filename,lineno:e.lineno},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(function(){});});
-          window.addEventListener('unhandledrejection',function(e){fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'index.html:inline',message:'HTML inline unhandled rejection',data:{reason:String(e.reason)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(function(){});});
-        } catch(e) {
-          console.error('Inline script error:', e);
-        }
-      })();
-      // #endregion
-    </script>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>

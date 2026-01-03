@@ -78,34 +78,18 @@ function App() {
   // Load Content with robust error handling
   useEffect(() => {
     const loadContent = async () => {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:79',message:'loadContent started',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-      // #endregion
       try {
         setLoadingData(true);
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:83',message:'calling CMS services',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-        // #endregion
         const [cmsPhotos, cmsPosts] = await Promise.all([getPhotos(), getBlogPosts()]);
-        
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:86',message:'CMS services completed',data:{photosCount:cmsPhotos.length,postsCount:cmsPosts.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-        // #endregion
         
         setPhotos(cmsPhotos.length > 0 ? cmsPhotos : DEMO_PHOTOS);
         setBlogPosts(cmsPosts.length > 0 ? cmsPosts : DEMO_BLOG_POSTS);
       } catch (error) {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:88',message:'loadContent error caught',data:{errorMessage:error instanceof Error?error.message:String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-        // #endregion
         console.error('Critical loading error:', error);
         // Ensure app still loads with fallback data if something crashes
         setPhotos(DEMO_PHOTOS);
         setBlogPosts(DEMO_BLOG_POSTS);
       } finally {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:94',message:'loadContent finished, setting loadingData=false',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-        // #endregion
         setLoadingData(false);
       }
     };
@@ -153,35 +137,6 @@ function App() {
 
   const opacity = Math.min(1, Math.max(0, 1 - (scrollY - 300) / 300));
   const focusOffset = Math.max(0, 60 - scrollY * 1.2);
-
-  // #region agent log - ALL hooks must be before conditional returns
-  useEffect(() => {
-    fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:141',message:'checking loadingData state',data:{loadingData},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    if (loadingData) {
-      fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:143',message:'rendering loading screen',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    } else {
-      fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:150',message:'rendering main app content',data:{photosCount:photos.length,view},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-    }
-  }, [loadingData, photos.length, view]);
-  
-  useEffect(() => {
-    if (!loadingData) {
-      const checkDOM = () => {
-        const root = document.getElementById('root');
-        const mainDiv = root?.querySelector('.min-h-screen');
-        const computedStyle = mainDiv ? window.getComputedStyle(mainDiv) : null;
-        fetch('http://127.0.0.1:7242/ingest/4cf3cb96-7efe-45ea-9e52-c83cb01fb542',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:184',message:'DOM visibility check',data:{rootExists:!!root,mainDivExists:!!mainDiv,display:computedStyle?.display,opacity:computedStyle?.opacity,visibility:computedStyle?.visibility,zIndex:computedStyle?.zIndex,backgroundColor:computedStyle?.backgroundColor},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-      };
-      const timeout = setTimeout(checkDOM, 100);
-      return () => clearTimeout(timeout);
-    }
-  }, [loadingData]);
-  // #endregion
-
-  // Log to console for production debugging (will help verify which version is deployed)
-  useEffect(() => {
-    console.log('[GR3] App version: hooks-fixed-v2', { loadingData, photosCount: photos.length, view });
-  }, [loadingData, photos.length, view]);
 
   if (loadingData) {
      return (
